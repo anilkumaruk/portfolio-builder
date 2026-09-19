@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "basics": {
+    "name": "Anilkumar U K",
+    "role": "B.Tech CSE Student · Full-stack & AI",
+    "summary": "I build practical software — an EdTech platform, a ticket-booking system — and I care about the part users actually touch. Currently in my third year at Alliance University, learning fast and shipping real projects.",
+    "location": "Bengaluru, India",
+    "languages": ["English", "Kannada", "Hindi"],
+    "photo": "assets/profile.jpg",
+    "resume": "assets/Anilkumar-UK-Resume.pdf",
+    "motto": ["Build", "Learn", "Grow"],
+    "availability": { "badge": "Open to opportunities", "note": "Open to internships & junior developer roles" }
+  },
+  "about": {
+    "heading": "Turning ideas into",
+    "headingAccent": "useful products.",
+    "body": "B.Tech Computer Science and Engineering student at Alliance University with a growing focus on full-stack development and AI-enabled applications. Hands-on experience building practical projects including an online movie ticket booking system and iBuddie, an EdTech platform. Eager to build useful products, strengthen engineering skills, and contribute to a software development team."
+  },
+  "stats": [
+    { "value": "6.4", "label": "CGPA · B.Tech CSE", "icon": "graduation" },
+    { "value": "2", "label": "Shipped projects", "icon": "code" },
+    { "value": "5", "label": "Certifications", "icon": "medal" },
+    { "value": "7", "label": "Languages & tools", "icon": "book" }
+  ],
+  "education": [
+    { "institution": "Alliance University", "degree": "B.Tech, Computer Science & Engineering", "start": "2024", "end": "2028", "score": "CGPA 6.4" },
+    { "institution": "Banasiri Lions PU College", "degree": "PUC — Science", "start": "2022", "end": "2024", "score": "77.5%" },
+    { "institution": "Vybhava Vidyaniketan School", "degree": "SSLC", "end": "2022", "score": "75.36%" }
+  ],
+  "skills": [
+    { "name": "Java" }, { "name": "Python" }, { "name": "C / C++" }, { "name": "HTML" }, { "name": "CSS" },
+    { "name": "JavaScript" }, { "name": "React / JSX" }, { "name": "Firebase" }, { "name": "Databases & SQL" },
+    { "name": "Google Cloud" }, { "name": "Azure Fundamentals" }, { "name": "Git & GitHub" }
+  ],
+  "strengths": ["Problem solving", "Data structures", "Responsive UI", "Critical thinking", "Team collaboration"],
+  "projects": [
+    {
+      "title": "iBuddie",
+      "subtitle": "EdTech platform · personal · full stack + AI",
+      "description": "An EdTech platform built around one question: what actually helps a student study? Digital and AI-assisted study features, student-oriented learning workflows, and a modern web interface that stays out of the way.",
+      "tags": ["Web development", "AI integration", "Student tools"],
+      "link": { "url": "https://ai.ibuddie.in", "label": "www.ai.ibuddie.in", "kind": "live" },
+      "icon": "graduation",
+      "gradient": ["#4560FF", "#7B5CF0"],
+      "mockup": "dashboard"
+    },
+    {
+      "title": "Movie Ticket Booking",
+      "subtitle": "Academic project · Python",
+      "description": "An end-to-end booking flow in Python: browse what's playing, check seat availability, hold a selection and confirm it. Written to practise clean program structure and the user interaction around a transaction.",
+      "tags": ["Python", "Booking flow", "User interface"],
+      "link": { "url": "https://github.com/anilkumaruk", "label": "See the code", "kind": "code" },
+      "icon": "ticket",
+      "gradient": ["#F43F5E", "#F97316"],
+      "mockup": "cards"
+    }
+  ],
+  "certifications": [
+    { "title": "Microsoft Certified — Azure Fundamentals", "issuer": "Microsoft", "date": "2026-06-15", "verb": "Issued" },
+    { "title": "Microsoft Applied Skills — Canvas apps with Power Apps", "issuer": "Microsoft", "date": "2025-04-09", "verb": "Earned", "mark": { "text": "PA", "color": "#742774" } },
+    { "title": "Google — Crash Course on Python (Coursera)", "issuer": "Google", "date": "2026-03-06" },
+    { "title": "IBM — Solving Problems with Creative & Critical Thinking", "issuer": "IBM", "date": "2026-03-14" },
+    { "title": "UC Santa Cruz — C++ for C Programmers, Part A", "issuer": "UC Santa Cruz", "date": "2025-09-27" }
+  ],
+  "achievements": [
+    { "text": "**CGPA 6.4** in B.Tech Computer Science & Engineering.", "icon": "trophy" },
+    { "text": "Scored **77.5%** in PUC Science.", "icon": "chart" },
+    { "text": "Scored **75.36%** in SSLC.", "icon": "chart-alt" },
+    { "text": "Completed industry certifications from **Microsoft, Google and IBM**.", "icon": "medal" },
+    { "text": "Shipped real projects with **Python, HTML, CSS, JavaScript, JSX, Firebase and Google Cloud**.", "icon": "code" }
+  ],
+  "contact": {
+    "email": "anilkumaruk51@gmail.com",
+    "phone": "+91 88611 42813",
+    "linkedin": "https://linkedin.com/in/anilkumaruk22",
+    "github": "https://github.com/anilkumaruk",
+    "heading": "Interested in working together?",
+    "body": "I'm open to internships, junior developer roles and interesting side projects. If you have something you'd like built — or just want to talk shop — my inbox is open.",
+    "cta": "Get in touch"
+  }
+}

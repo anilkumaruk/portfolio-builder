@@ -1,0 +1,11 @@
+
+/* ---------- builder additions: graceful empty sections (desktop only; mobile rules above still win) ---------- */
+@media (min-width:1081px){
+  .tri[data-cols="1"]{grid-template-columns:minmax(0,1fr);max-width:640px}
+  .tri[data-cols="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .projects[data-count="1"]{grid-template-columns:minmax(0,1fr)}
+}
+.project.no-mock{grid-template-columns:minmax(0,1fr)}
+@media (min-width:1081px){
+  .about-grid.solo{grid-template-columns:minmax(0,1fr);max-width:760px}
+}

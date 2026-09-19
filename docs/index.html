@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Builder</title>
+<style>
+:root{--bg:#EEF1F8;--panel:#fff;--tile:#F7F9FD;--text:#101728;--text-2:#4B5872;--line:#E3E8F2;--accent:#4560FF;--accent-2:#7B5CF0;--bad:#DC2626;--good:#16A34A}
+@media (prefers-color-scheme:dark){:root{--bg:#05091A;--panel:#0E1530;--tile:#141C3A;--text:#E9EEFB;--text-2:#9AA6C6;--line:rgba(255,255,255,.1);--accent:#7E93FF;--accent-2:#A78BFA}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:17px;margin:0 auto 0 0;letter-spacing:-.02em}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--tile);color:var(--text);padding:8px 14px;border-radius:10px;font-weight:600}
+button:hover{border-color:var(--accent)}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:0}
+button:disabled{opacity:.5;cursor:default}
+main{flex:1;display:grid;grid-template-columns:minmax(360px,460px) 1fr;min-height:0}
+#form{overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px;border-right:1px solid var(--line)}
+#preview{width:100%;height:100%;border:0;background:#fff}
+.pane{position:relative;min-height:0}
+#msg{position:absolute;left:12px;bottom:12px;right:12px;padding:10px 14px;border-radius:10px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.2);display:none;white-space:pre-wrap}
+#msg.bad{border-color:var(--bad);color:var(--bad)} #msg.ok{border-color:var(--good)}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;background:var(--panel);color:var(--text-2)}
+.drop.over{border-color:var(--accent);background:var(--tile)}
+.drop b{color:var(--text)}
+details{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+summary{padding:12px 14px;font-weight:700;cursor:pointer}
+.body{padding:0 14px 14px;display:grid;gap:10px}
+label{display:grid;gap:4px;font-size:12px;font-weight:600;color:var(--text-2)}
+input,textarea,select{font:inherit;color:var(--text);background:var(--tile);border:1px solid var(--line);border-radius:9px;padding:8px 10px;width:100%}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0}
+textarea{min-height:76px;resize:vertical}
+.item{border:1px solid var(--line);border-radius:12px;padding:10px;display:grid;gap:8px;background:var(--tile);position:relative}
+.item .rm{position:absolute;top:6px;right:6px;padding:2px 8px;font-size:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hint{font-size:12px;color:var(--text-2)}
+.check{display:flex;gap:8px;align-items:center;font-size:12.5px;font-weight:500;color:var(--text-2)}
+.tabs{position:absolute;top:8px;right:12px;display:flex;gap:4px;z-index:2}
+.tabs button{padding:4px 12px;font-size:12px;border-radius:8px;background:rgba(16,23,40,.85);color:#fff;border:0}
+.tabs button.on{background:var(--accent)}
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);width:min(520px,92vw);padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog label{margin-top:8px}
+a{color:var(--accent)}
+@media (max-width:860px){main{grid-template-columns:1fr;grid-template-rows:auto 60vh}#form{border-right:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Portfolio Builder</h1>
+  <button id="btn-example">Load example</button>
+  <button id="btn-import">Import</button>
+  <button id="btn-json">Save data</button>
+  <button id="btn-resume-pdf">Get resume (PDF)</button>
+  <button id="btn-dl">Download website</button>
+  <button id="btn-publish" class="primary">Publish to GitHub</button>
+  <input type="file" id="f-json" accept="application/json,.json" hidden>
+</header>
+<main>
+  <div id="form">
+    <div class="drop" id="drop">
+      <b>Have a resume?</b> Upload it (PDF or .txt) and we fill the form for you.<br>
+      <span class="hint">Read privately in your browser, nothing is uploaded anywhere. Best with text-based PDFs; always review the result.</span><br>
+      <button id="btn-resume" style="margin-top:8px">Choose resume…</button>
+      <input type="file" id="f-resume" accept="application/pdf,text/plain,.pdf,.txt" hidden>
+      <div class="hint" style="margin-top:10px"><b>No resume?</b> Just fill in the form below: we build your portfolio <i>and</i> a professional resume from it.</div>
+    </div>
+    <label class="check"><input type="checkbox" id="use-gen" checked style="width:auto"> Use my generated resume for the site's "Download CV" button</label>
+    <div id="sections"></div>
+  </div>
+  <div class="pane"><div class="tabs"><button id="tab-site" class="on">Website</button><button id="tab-resume">Resume</button></div><iframe id="preview" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads" title="Preview"></iframe><div id="msg"></div></div>
+</main>
+<dialog id="pub">
+  <h2 style="margin:0 0 6px">Publish to GitHub Pages</h2>
+  <p class="hint">Creates <b>YOUR-USERNAME.github.io</b> on your GitHub account and puts your portfolio there. Free, and you own it.</p>
+  <ol class="hint" style="padding-left:18px;margin:8px 0">
+    <li>No GitHub account? <a href="https://github.com/signup" target="_blank" rel="noopener">Create one</a> (free).</li>
+    <li><a id="tok-link" href="https://github.com/settings/tokens/new?scopes=public_repo&description=Portfolio%20Builder" target="_blank" rel="noopener">Create a token</a> with the <code>public_repo</code> scope and paste it below.</li>
+  </ol>
+  <label>GitHub token<input id="pub-token" type="password" autocomplete="off" placeholder="ghp_…"></label>
+  <label>Repository name (leave empty for <i>username</i>.github.io)<input id="pub-repo" placeholder="username.github.io"></label>
+  <p class="hint">Your token is sent only to api.github.com from this page and is never stored. Delete it on GitHub afterwards if you like.</p>
+  <pre id="pub-log" class="hint" style="white-space:pre-wrap;margin:8px 0"></pre>
+  <div style="display:flex;gap:8px;justify-content:flex-end"><button id="pub-close">Close</button><button id="pub-go" class="primary">Publish</button></div>
+</dialog>
+<script src="portfolio-lib.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

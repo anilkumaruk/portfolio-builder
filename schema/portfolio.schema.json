@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portfolio-builder.local/schema/portfolio.schema.json",
+  "title": "Portfolio",
+  "description": "Everything a template needs to render one portfolio site. Only `basics.name` is required; every section is optional and is hidden when empty. This same schema is used by (1) the manual form, (2) the resume-parsing LLM prompt, and (3) the renderer.",
+  "type": "object",
+  "required": ["basics"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "integer", "const": 1, "description": "Schema version, for future migrations." },
+
+    "seo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "description": "<title>. Defaults to basics.name." },
+        "description": { "type": "string", "maxLength": 300, "description": "Meta description. Defaults to a sentence built from name + role." }
+      }
+    },
+
+    "basics": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "role": { "type": "string", "maxLength": 120, "description": "One-line title shown under the name, e.g. 'B.Tech CSE Student · Full-stack & AI'." },
+        "summary": { "type": "string", "maxLength": 500, "description": "Short intro paragraph in the hero." },
+        "location": { "type": "string", "maxLength": 80 },
+        "languages": { "type": "array", "items": { "type": "string" }, "maxItems": 8, "description": "Spoken languages." },
+        "photo": { "type": "string", "description": "Path relative to the data folder, e.g. assets/profile.jpg. Omit to show initials only." },
+        "resume": { "type": "string", "description": "Path to a PDF relative to the data folder. Omit and the CV button prints the page instead." },
+        "motto": { "type": "array", "items": { "type": "string", "maxLength": 20 }, "maxItems": 4, "description": "Up to 4 short words in the handwritten note beside the photo." },
+        "availability": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "badge": { "type": "string", "maxLength": 40, "description": "Pill under the photo, e.g. 'Open to opportunities'." },
+            "note": { "type": "string", "maxLength": 100, "description": "Sidebar line under the location." }
+          }
+        }
+      }
+    },
+
+    "about": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "heading": { "type": "string", "maxLength": 60, "description": "Plain part of the heading." },
+        "headingAccent": { "type": "string", "maxLength": 40, "description": "Gradient-highlighted tail of the heading." },
+        "body": { "type": "string", "maxLength": 1500 }
+      }
+    },
+
+    "stats": {
+      "type": "array",
+      "maxItems": 4,
+      "description": "Up to 4 stat cards. Omit to auto-generate (projects / certifications / skills counts).",
+      "items": {
+        "type": "object",
+        "required": ["value", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "value": { "type": "string", "maxLength": 8 },
+          "label": { "type": "string", "maxLength": 40 },
+          "icon": { "$ref": "#/$defs/iconName" }
+        }
+      }
+    },
+
+    "education": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["institution"],
+        "additionalProperties": false,
+        "properties": {
+          "institution": { "type": "string", "maxLength": 100 },
+          "degree": { "type": "string", "maxLength": 100, "description": "e.g. 'B.Tech, Computer Science & Engineering'." },
+          "start": { "type": "string", "maxLength": 12 },
+          "end": { "type": "string", "maxLength": 12, "description": "Year, or 'Present'." },
+          "score": { "type": "string", "maxLength": 30, "description": "e.g. 'CGPA 6.4' or '77.5%'." }
+        }
+      }
+    },
+
+    "skills": {
+      "type": "array",
+      "maxItems": 30,
+      "description": "Skill chips. Known technologies get their brand colour and mark automatically (see src/catalog.js); unknown ones get initials and a stable colour.",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "maxLength": 40 },
+          "mark": { "type": "string", "maxLength": 4, "description": "Override the 1–3 character badge." },
+          "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$", "description": "Override the badge colour." }
+        }
+      }
+    },
+    "strengths": {
+      "type": "array",
+      "maxItems": 10,
+      "items": { "type": "string", "maxLength": 40 },
+      "description": "Soft skills shown as tags under the chips."
+    },
+
+    "projects": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string", "maxLength": 80 },
+          "subtitle": { "type": "string", "maxLength": 100, "description": "e.g. 'EdTech platform · personal · full stack + AI'." },
+          "description": { "type": "string", "maxLength": 600 },
+          "tags": { "type": "array", "items": { "type": "string", "maxLength": 24 }, "maxItems": 6 },
+          "link": {
+            "type": "object",
+            "required": ["url"],
+            "additionalProperties": false,
+            "properties": {
+              "url": { "type": "string", "pattern": "^https?://" },
+              "label": { "type": "string", "maxLength": 40, "description": "Defaults to the hostname." },
+              "kind": { "type": "string", "enum": ["live", "code"], "description": "'live' shows an external-link icon next to the title." }
+            }
+          },
+          "icon": { "$ref": "#/$defs/iconName" },
+          "gradient": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "Two colours for the project icon tile. Defaults to a stable pair derived from the title."
+          },
+          "mockup": { "type": "string", "enum": ["dashboard", "cards", "none"], "description": "Decorative preview art. Defaults to 'dashboard'." }
+        }
+      }
+    },
+
+    "certifications": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string", "maxLength": 140 },
+          "issuer": { "type": "string", "maxLength": 60, "description": "Used to pick the badge colour when `mark` is absent." },
+          "date": { "type": "string", "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$", "description": "ISO date: YYYY, YYYY-MM or YYYY-MM-DD." },
+          "verb": { "type": "string", "enum": ["Issued", "Earned", "Completed"], "description": "Defaults to 'Completed'." },
+          "mark": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "text": { "type": "string", "maxLength": 4 },
+              "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+            }
+          }
+        }
+      }
+    },
+
+    "achievements": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["text"],
+        "additionalProperties": false,
+        "properties": {
+          "text": { "type": "string", "maxLength": 240, "description": "Plain text. Wrap a phrase in **double asterisks** to bold it. No HTML." },
+          "icon": { "$ref": "#/$defs/iconName" }
+        }
+      }
+    },
+
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "email": { "type": "string", "format": "email", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 30, "description": "As it should be displayed, e.g. '+91 88611 42813'." },
+        "linkedin": { "type": "string", "pattern": "^https?://", "maxLength": 200 },
+        "github": { "type": "string", "pattern": "^https?://", "maxLength": 200 },
+        "heading": { "type": "string", "maxLength": 80 },
+        "body": { "type": "string", "maxLength": 400 },
+        "cta": { "type": "string", "maxLength": 30, "description": "Button label. Defaults to 'Get in touch'." }
+      }
+    },
+
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "template": { "type": "string", "enum": ["default"], "description": "Template folder name under templates/." }
+      }
+    }
+  },
+
+  "$defs": {
+    "iconName": {
+      "type": "string",
+      "enum": ["graduation", "code", "medal", "book", "ticket", "trophy", "chart", "chart-alt", "star", "rocket", "globe", "briefcase", "bolt"],
+      "description": "Name from the built-in icon set (src/icons.js)."
+    }
+  }
+}
