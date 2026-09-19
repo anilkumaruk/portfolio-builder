@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node scripts/build-web.js",
     "start": "node scripts/build-web.js && node src/server.js",
-    "build:example": "node src/build.js examples/anilkumar/portfolio.json dist"
+    "build:example": "node src/build.js examples/anilkumar/portfolio.json dist",
+    "test": "node --test test/"
   },
   "engines": {
     "node": ">=18"

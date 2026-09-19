@@ -24,25 +24,53 @@ async function pdfLines(buffer) {
       .map((i) => ({ s: i.str, x: i.transform[4], y: i.transform[5], w: i.width, h: Math.abs(i.transform[3]) || 10 }));
     if (!items.length) continue;
 
-    for (const col of splitColumns(items, width)) lines.push(...toLines(col));
+    for (const block of splitPage(items, width)) lines.push(...toLines(block));
   }
   return lines;
 }
 
-/** Find a gutter: an x-range no item crosses, wide enough and with real content on both sides. */
-function splitColumns(items, width) {
-  const edges = [...items].sort((a, b) => a.x - b.x);
+/**
+ * Reading order for one page. If a vertical gutter exists the page becomes
+ * [spanning-above, left column, right column, spanning-below]. A few items may cross the gutter
+ * (centred footers, full-width banners); they are set aside instead of hiding the columns.
+ */
+function splitPage(items, width) {
+  const gutter = findGutter(items, width);
+  if (gutter === null) return [items];
+  const crosses = (i) => i.x < gutter && i.x + i.w > gutter;
+  const spanning = items.filter(crosses);
+  const body = items.filter((i) => !crosses(i));
+  const top = Math.max(...body.map((i) => i.y));
+  return [
+    spanning.filter((i) => i.y > top),
+    body.filter((i) => i.x < gutter),
+    body.filter((i) => i.x >= gutter),
+    spanning.filter((i) => i.y <= top),
+  ];
+}
+
+/** x of a vertical gutter (at most a few items cross it) with real prose on both sides; else null. */
+function findGutter(items, width) {
+  if (items.length < 8) return null;
+  const maxCross = Math.max(3, Math.floor(items.length * 0.08));
+  const need = width * 0.015;
   let best = null;
-  let reach = edges[0].x + edges[0].w;
-  for (let i = 1; i < edges.length; i++) {
-    const gap = edges[i].x - reach;
-    if (gap > width * 0.04 && edges[i].x > width * 0.2 && edges[i].x < width * 0.8 && (!best || gap > best.gap)) best = { gap, at: edges[i].x };
-    reach = Math.max(reach, edges[i].x + edges[i].w);
+  let run = null;
+  for (let x = width * 0.25; x <= width * 0.75; x += 1) {
+    const cross = items.reduce((n, i) => n + (i.x < x && i.x + i.w > x ? 1 : 0), 0);
+    if (cross <= maxCross) {
+      run = run ? { ...run, end: x } : { start: x, end: x };
+      if (!best || run.end - run.start > best.end - best.start) best = { ...run };
+    } else run = null;
   }
-  if (!best) return [items];
-  const left = items.filter((i) => i.x < best.at - 1);
-  const right = items.filter((i) => i.x >= best.at - 1);
-  return left.length >= items.length * 0.15 && right.length >= items.length * 0.15 ? [left, right] : [items];
+  if (!best || best.end - best.start < need) return null;
+  const g = (best.start + best.end) / 2;
+  const body = items.filter((i) => !(i.x < g && i.x + i.w > g));
+  const side = (list) => ({ n: list.length, avg: list.reduce((t, i) => t + i.s.trim().length, 0) / (list.length || 1) });
+  const l = side(body.filter((i) => i.x < g));
+  const r = side(body.filter((i) => i.x >= g));
+  const ok = (v) => v.n >= body.length * 0.2 && v.avg >= 8;
+  return ok(l) && ok(r) ? g : null;
 }
 
 function toLines(items) {
