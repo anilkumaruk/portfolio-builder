@@ -50,7 +50,9 @@ fs.mkdirSync(path.join(out, 'vendor'), { recursive: true });
 fs.mkdirSync(path.join(out, 'examples'), { recursive: true });
 fs.writeFileSync(path.join(out, 'portfolio-lib.js'), bundle);
 for (const f of ['index.html', 'app.js']) fs.copyFileSync(path.join(root, 'web', f), path.join(out, f));
-for (const f of ['pdf.min.mjs', 'pdf.worker.min.mjs']) fs.copyFileSync(path.join(root, 'node_modules', 'pdfjs-dist', 'build', f), path.join(out, 'vendor', f));
+// legacy build: works in Safari / older browsers (modern build needs ReadableStream async iteration)
+for (const f of ['pdf.min.mjs', 'pdf.worker.min.mjs']) fs.copyFileSync(path.join(root, 'node_modules', 'pdfjs-dist', 'legacy', 'build', f), path.join(out, 'vendor', f));
+for (const f of ['polyfill.mjs', 'worker-shim.mjs']) fs.copyFileSync(path.join(root, 'web', f), path.join(out, 'vendor', f));
 fs.copyFileSync(path.join(root, 'examples', 'anilkumar', 'portfolio.json'), path.join(out, 'examples', 'sample.json'));
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 console.log('built docs/ (' + Math.round(bundle.length / 1024) + ' KB bundle)');

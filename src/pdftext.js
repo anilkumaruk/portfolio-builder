@@ -4,8 +4,9 @@
 
 async function loadPdfjs() {
   if (typeof window !== 'undefined') { // browser build: vendored next to the page
+    await import(new URL('vendor/polyfill.mjs', document.baseURI).href);
     const pdfjs = await import(new URL('vendor/pdf.min.mjs', document.baseURI).href);
-    pdfjs.GlobalWorkerOptions.workerSrc = new URL('vendor/pdf.worker.min.mjs', document.baseURI).href;
+    pdfjs.GlobalWorkerOptions.workerSrc = new URL('vendor/worker-shim.mjs', document.baseURI).href;
     return pdfjs;
   }
   return import('pdfjs-dist/legacy/build/pdf.mjs');
